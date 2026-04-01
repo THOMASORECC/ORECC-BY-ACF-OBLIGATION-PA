@@ -591,13 +591,13 @@ function reset() {
 // ── TARIF ─────────────────────────────────────────────────
 
 const TARIF_CONFIG = {
-  plateforme: { lmnp: 5, sci: 5, bnc: 5, societe: 10, ae: 10 },
+  plateforme: { lmnp: 5, sci: 5, bnc: 5, societe: 10, ae: 10, holding: 5 },
   logiciel: {
     simple: { low: 5, high: 5 },
     tpe: { low: 10, high: 20, business: 30, performance: 65 }
   },
   // Logiciel comptable en révision (optionnel)
-  compta: { lmnp: 5, sci: 5, bnc: 15, societe: 30, ae: 30 }
+  compta: { lmnp: 5, sci: 7.5, bnc: 15, societe: 30, ae: 30, holding: 15 }
 };
 
 function isSimpleStructure(type) {
@@ -640,6 +640,7 @@ function renderTarifStructurePicker() {
         '<button class="opt" onclick="setTarifType(&quot;bnc&quot;, this)"><span class="dot"></span> BNC / Libérale</button>' +
         '<button class="opt" onclick="setTarifType(&quot;societe&quot;, this)"><span class="dot"></span> SARL / SAS / SA</button>' +
         '<button class="opt" onclick="setTarifType(&quot;ae&quot;, this)"><span class="dot"></span> Auto-entrepreneur</button>' +
+        '<button class="opt" onclick="setTarifType(&quot;holding&quot;, this)"><span class="dot"></span> Holding</button>' +
       '</div>' +
     '</div>' +
     '<div id="tarif-mission-card" class="q-card" style="display:none;">' +
@@ -655,7 +656,7 @@ let tarifMission = null;
 
 const TARIF_TYPE_LABELS = {
   lmnp: '🏠 LMNP / LMP', sci: '🏢 SCI', bnc: '⚖️ BNC / Profession libérale',
-  societe: '🏭 SARL / SAS / SA', ae: '👤 Auto-entrepreneur'
+  societe: '🏭 SARL / SAS / SA', ae: '👤 Auto-entrepreneur', holding: '🏦 Holding'
 };
 
 function updateStructureBadge() {
@@ -678,7 +679,7 @@ function setTarifType(type, btn) {
   }
   updateStructureBadge();
   // BNC : pas de notion tenue/révision
-  if (type === 'bnc') {
+  if (type === 'bnc' || type === 'holding') {
     setTimeout(() => renderTarifQuestions(), 200);
     return;
   }
@@ -776,8 +777,8 @@ function selectTarifProduit(produit, btn) {
   if (produit === 'aucun') {
     showComptaOrCompute();
   } else if (produit === 'plateforme') {
-    // BNC : même pour plateforme seule, on demande Limpeed
-    if (currentType === 'bnc') {
+    // BNC/Holding : même pour plateforme seule, on demande Limpeed
+    if (currentType === 'bnc' || currentType === 'holding') {
       const limpeedCard = document.getElementById('tarif-limpeed-card');
       limpeedCard.style.display = '';
       limpeedCard.querySelectorAll('.opt').forEach(b => { b.classList.remove('sel-oui'); b.querySelector('.dot').classList.remove('on'); });
@@ -809,8 +810,8 @@ function selectTarifVol(vol, btn) {
   if (['societe', 'ae'].includes(currentType) && vol === 'high') {
     optCard.style.display = '';
     setTimeout(() => optCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
-  } else if (currentType === 'bnc') {
-    // BNC : question Limpeed avant de calculer
+  } else if (currentType === 'bnc' || currentType === 'holding') {
+    // BNC/Holding : question Limpeed avant de calculer
     const limpeedCard = document.getElementById('tarif-limpeed-card');
     limpeedCard.style.display = '';
     limpeedCard.querySelectorAll('.opt').forEach(b => { b.classList.remove('sel-oui'); b.querySelector('.dot').classList.remove('on'); });
@@ -880,8 +881,8 @@ function computeTarif() {
     } else if (simple) {
       // LMNP : toujours 5€
       logiciel = 5; logicielLabel = 'MyU First'; volLabel = '';
-    } else if (currentType === 'bnc') {
-      // BNC : 5€ < 5 factures, 10€ > 5 factures
+    } else if (currentType === 'bnc' || currentType === 'holding') {
+      // BNC/Holding : 5€ < 5 factures, 10€ > 5 factures
       volLabel = tarifVol === 'low' ? '< 5 factures/mois' : '> 5 factures/mois';
       logiciel = tarifVol === 'low' ? 5 : 10;
       logicielLabel = 'MyU First';
@@ -898,6 +899,10 @@ function computeTarif() {
   let compta = 0;
   if (tarifMission === 'revision' && tarifCompta === 'oui') {
     compta = TARIF_CONFIG.compta[currentType] || 30;
+    // SCI en révision avec logiciel comptable : plateforme réduite à 2.50€
+    if (currentType === 'sci' && plateforme > 0) {
+      plateforme = 2.5;
+    }
   }
 
   const limpeedCost = (currentType === 'bnc' && tarifLimpeed === 'oui') ? 10 : 0;
