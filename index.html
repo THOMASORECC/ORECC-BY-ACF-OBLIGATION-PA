@@ -215,6 +215,18 @@
       </div>
     </div>
 
+    <div id="video-home-card" style="margin-bottom:1rem;">
+      <div class="type-card" onclick="window.open('https://www2.myunisoft.fr/outils/o/MyUGFi/FormFirst/User/CLI_GFirst-user_RecepFactFrs/', '_blank')" style="display:flex;align-items:center;gap:16px;padding:1.2rem 1.4rem;border-color:var(--accent-border);background:var(--accent-bg);cursor:pointer;">
+        <span style="font-size:28px;flex-shrink:0;display:inline-block;animation:videoPlay 1.5s ease-in-out infinite;">▶️</span>
+        <style>@keyframes videoPlay{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}</style>
+        <div>
+          <div class="type-name" style="font-size:15px;color:var(--accent);">Tutoriel — Réception des factures fournisseurs</div>
+          <div class="type-desc">Vidéo de formation MyUnisoft</div>
+        </div>
+        <span style="margin-left:auto;font-size:20px;color:var(--accent);">→</span>
+      </div>
+    </div>
+
     <div id="tarif-home-card" style="margin-bottom:1.5rem;">
       <div class="type-card" onclick="showTarifModule()" style="display:flex;align-items:center;gap:16px;padding:1.2rem 1.4rem;border-color:var(--accent-border);background:var(--accent-bg);">
         <span style="font-size:32px;flex-shrink:0;display:inline-block;animation:euroFloat 1.8s ease-in-out infinite;">💶</span>
@@ -536,6 +548,7 @@ function resetTarif() {
   document.getElementById('tarif-home-card').style.display = '';
   document.getElementById('chat-home-card').style.display = '';
   document.getElementById('lexique-home-card').style.display = '';
+  document.getElementById('video-home-card').style.display = '';
   document.getElementById('pa-submenu').style.display = 'none';
   document.getElementById('pa-arrow').style.transform = '';
   document.getElementById('pa-arrow').textContent = '→';
@@ -552,6 +565,7 @@ function backToS1() {
   document.getElementById('tarif-home-card').style.display = '';
   document.getElementById('chat-home-card').style.display = '';
   document.getElementById('lexique-home-card').style.display = '';
+  document.getElementById('video-home-card').style.display = '';
   document.getElementById('pa-submenu').style.display = 'none';
   document.getElementById('pa-arrow').style.transform = '';
   document.getElementById('pa-arrow').textContent = '→';
@@ -576,6 +590,7 @@ function reset() {
   document.getElementById('tarif-home-card').style.display = '';
   document.getElementById('chat-home-card').style.display = '';
   document.getElementById('lexique-home-card').style.display = '';
+  document.getElementById('video-home-card').style.display = '';
   document.getElementById('pa-submenu').style.display = 'none';
   document.getElementById('pa-arrow').style.transform = '';
   document.getElementById('pa-arrow').textContent = '→';
@@ -777,8 +792,8 @@ function selectTarifProduit(produit, btn) {
   if (produit === 'aucun') {
     showComptaOrCompute();
   } else if (produit === 'plateforme') {
-    // BNC/Holding : même pour plateforme seule, on demande Limpeed
-    if (currentType === 'bnc' || currentType === 'holding') {
+    // BNC uniquement : pour plateforme seule, on demande Limpeed
+    if (currentType === 'bnc') {
       const limpeedCard = document.getElementById('tarif-limpeed-card');
       limpeedCard.style.display = '';
       limpeedCard.querySelectorAll('.opt').forEach(b => { b.classList.remove('sel-oui'); b.querySelector('.dot').classList.remove('on'); });
@@ -810,8 +825,8 @@ function selectTarifVol(vol, btn) {
   if (['societe', 'ae'].includes(currentType) && vol === 'high') {
     optCard.style.display = '';
     setTimeout(() => optCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
-  } else if (currentType === 'bnc' || currentType === 'holding') {
-    // BNC/Holding : question Limpeed avant de calculer
+  } else if (currentType === 'bnc') {
+    // BNC uniquement : question Limpeed avant de calculer
     const limpeedCard = document.getElementById('tarif-limpeed-card');
     limpeedCard.style.display = '';
     limpeedCard.querySelectorAll('.opt').forEach(b => { b.classList.remove('sel-oui'); b.querySelector('.dot').classList.remove('on'); });
@@ -964,6 +979,7 @@ function showModeChoice() {
   document.getElementById('tarif-home-card').style.display = '';
   document.getElementById('chat-home-card').style.display = '';
   document.getElementById('lexique-home-card').style.display = '';
+  document.getElementById('video-home-card').style.display = '';
 }
 
 function showSirenMode() {
@@ -971,6 +987,7 @@ function showSirenMode() {
   document.getElementById('tarif-home-card').style.display = 'none';
   document.getElementById('chat-home-card').style.display = 'none';
   document.getElementById('lexique-home-card').style.display = 'none';
+  document.getElementById('video-home-card').style.display = 'none';
   document.getElementById('siren-mode').classList.remove('hidden');
   document.getElementById('manual-mode').classList.add('hidden');
   setTimeout(() => document.getElementById('siren-input').focus(), 100);
@@ -981,6 +998,7 @@ function showManualMode() {
   document.getElementById('tarif-home-card').style.display = 'none';
   document.getElementById('chat-home-card').style.display = 'none';
   document.getElementById('lexique-home-card').style.display = 'none';
+  document.getElementById('video-home-card').style.display = 'none';
   document.getElementById('manual-mode').classList.remove('hidden');
   document.getElementById('siren-mode').classList.add('hidden');
 }
@@ -1297,6 +1315,7 @@ function showLexique() {
   document.getElementById('tarif-home-card').style.display = 'none';
   document.getElementById('chat-home-card').style.display = 'none';
   document.getElementById('lexique-home-card').style.display = 'none';
+  document.getElementById('video-home-card').style.display = 'none';
   document.getElementById('lexique-home-card').style.display = 'none';
   document.getElementById('lexique-section').classList.remove('hidden');
   renderLexique(LEXIQUE);
@@ -1384,6 +1403,7 @@ function resetLexique() {
   document.getElementById('tarif-home-card').style.display = '';
   document.getElementById('chat-home-card').style.display = '';
   document.getElementById('lexique-home-card').style.display = '';
+  document.getElementById('video-home-card').style.display = '';
   document.getElementById('lexique-home-card').style.display = '';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1473,6 +1493,7 @@ function resetChat() {
   document.getElementById('tarif-home-card').style.display = '';
   document.getElementById('chat-home-card').style.display = '';
   document.getElementById('lexique-home-card').style.display = '';
+  document.getElementById('video-home-card').style.display = '';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
